@@ -406,13 +406,13 @@
     <input type="text" id="search-input" placeholder="Search pedals…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     <div id="results-dropdown"></div>
   </div>
+  <button class="action-btn" onclick="showAbout()" style="flex-shrink:0;">ℹ️<span class="btn-label"> About</span></button>
   <div class="toolbar-actions">
     <button class="action-btn" onclick="showTitleModal()">✏️<span class="btn-label"> Title</span></button>
     <button class="action-btn" onclick="exportImage()">📸<span class="btn-label"> Export</span></button>
     <button class="action-btn" onclick="saveTierList()">💾<span class="btn-label"> Save</span></button>
     <button class="action-btn" onclick="loadTierList()">📂<span class="btn-label"> Load</span></button>
     <button class="action-btn danger" onclick="clearAll()">🗑<span class="btn-label"> Clear</span></button>
-    <button class="action-btn" onclick="showAbout()">ℹ️<span class="btn-label"> About</span></button>
   </div>
 </div>
 
@@ -466,7 +466,7 @@
 
     <div class="section" style="margin-bottom:0;">
       <div class="section-title">Credits</div>
-      Built by <a href="https://www.linkedin.com/in/jeremydabramson/" target="_blank" rel="noopener">Jeremy Abramson</a> (aka <strong style="color:#fff">Pedalboardom</strong>).<br>
+      Built by <a href="https://www.instagram.com/pedalboardom/" target="_blank" rel="noopener">Jeremy Abramson</a> (aka <strong style="color:#fff">Pedalboardom</strong>).<br>
       Pedal data &amp; images by <a href="https://github.com/PedalPlayground/pedalplayground" target="_blank" rel="noopener">Pedal Playground</a>.
     </div>
 
@@ -885,11 +885,18 @@ async function exportImage() {
   wrap.innerHTML = '<div style="padding:20px;color:#fff;font-size:12px;">Rendering…</div>';
   await new Promise(r => setTimeout(r, 50));
 
-  const TH = 160, PAD = 24, LW = 150, PG = 16, PP = 16;
+  const TH = 160, PAD = 24, PG = 16, PP = 16;
   const TITLE_H = canvasTitle ? 52 : 0;
   const tiers = ['ultra','high','mid','low'];
   const colors = { ultra:'#ff2d55', high:'#5856d6', mid:'#34c759', low:'#007aff' };
   const labels = { ultra:'ULTRA', high:'HIGH', mid:'MID', low:'LOW' };
+
+  // Measure label width dynamically so text always fits
+  const tmpC = document.createElement('canvas').getContext('2d');
+  tmpC.font = 'bold 26px "Press Start 2P", monospace';
+  let LW = 0;
+  for (const t of tiers) { LW = Math.max(LW, tmpC.measureText(labels[t]).width); }
+  LW = Math.ceil(LW) + 40; // add comfortable padding
 
   // Compute width: ensure row bg always covers pedals
   let maxPedalRowW = 0;
