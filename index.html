@@ -22,7 +22,7 @@
     --low-color: #007aff;
     --panel-bg: rgba(15, 20, 30, 0.92);
     --panel-border: rgba(255,255,255,0.08);
-    --label-w: 120px;
+    --label-w: 150px;
   }
 
   html, body {
@@ -354,7 +354,7 @@
 
   /* ─── Responsive ─── */
   @media (max-width: 700px) {
-    :root { --label-w: 60px; }
+    :root { --label-w: 80px; }
     #toolbar h1 { font-size: 8px; }
     .toolbar-sub { display: none; }
     .action-btn .btn-label { display: none; }
@@ -373,7 +373,7 @@
     #title-banner { padding: 2px 8px; }
   }
   @media (max-width: 500px) {
-    :root { --label-w: 48px; }
+    :root { --label-w: 56px; }
     #toolbar h1 { display: none; }
     .toolbar-sub { display: none; }
     .tier-label { font-size: 8px; }
@@ -409,8 +409,8 @@
   <button class="action-btn" onclick="showAbout()" style="flex-shrink:0;">ℹ️<span class="btn-label"> About</span></button>
   <div class="toolbar-actions">
     <button class="action-btn" onclick="showTitleModal()">✏️<span class="btn-label"> Title</span></button>
-    <button class="action-btn" onclick="exportImage()">📸<span class="btn-label"> Export</span></button>
-    <button class="action-btn" onclick="saveTierList()">💾<span class="btn-label"> Save</span></button>
+    <button class="action-btn" onclick="exportImage()">📸<span class="btn-label"> Export (PNG)</span></button>
+    <button class="action-btn" onclick="saveTierList()">💾<span class="btn-label"> Save (JSON)</span></button>
     <button class="action-btn" onclick="loadTierList()">📂<span class="btn-label"> Load</span></button>
     <button class="action-btn danger" onclick="clearAll()">🗑<span class="btn-label"> Clear</span></button>
   </div>
@@ -447,18 +447,27 @@
     <div class="section">
       <div class="section-title">What is this?</div>
       Musician <strong style="color:#fff">Ivan Anderson</strong> (known on YouTube as
-      <a href="https://www.youtube.com/@cyberattack" target="_blank" rel="noopener">cyberattack</a>)
+      <a href="https://www.youtube.com/@CyberattackWorld" target="_blank" rel="noopener">Cyberattack</a>)
       makes tier-ranking videos where he sorts various categories of guitar pedals
       into tiers — Ultra, High, Mid, and Low. The Ivanizer is an homage to that format,
       letting you build your own pedal tier lists using the same layout.
     </div>
 
     <div class="section">
+      <div class="section-title">Ivan's tier definitions</div>
+      <p style="margin-bottom:8px;">You can use any tier ranking you'd like, but to get you started, here's Ivan's:</p>
+      <div class="help-item"><span class="help-icon" style="color:var(--ultra-color);font-weight:bold;">U</span><span class="help-text"><strong style="color:var(--ultra-color)">Ultra</strong> — These are pedals that define "your sound." Without these, you couldn't do what you do.</span></div>
+      <div class="help-item"><span class="help-icon" style="color:var(--high-color);font-weight:bold;">H</span><span class="help-text"><strong style="color:var(--high-color)">High</strong> — These are pedals that have been on a gig board, or appeared on a record.</span></div>
+      <div class="help-item"><span class="help-icon" style="color:var(--mid-color);font-weight:bold;">M</span><span class="help-text"><strong style="color:var(--mid-color)">Mid</strong> — These are pedals you still own, but have not appeared on a record or gigged with (yet).</span></div>
+      <div class="help-item"><span class="help-icon" style="color:var(--low-color);font-weight:bold;">L</span><span class="help-text"><strong style="color:var(--low-color)">Low</strong> — These are pedals you had, but got rid of at some point.</span></div>
+    </div>
+
+    <div class="section">
       <div class="section-title">How to use</div>
       <div class="help-item"><span class="help-icon">🔍</span><span class="help-text"><strong style="color:#fff">Search</strong> — Type a brand or pedal name to find it, then tap a tier button (U/H/M/L) to add it.</span></div>
       <div class="help-item"><span class="help-icon">✏️</span><span class="help-text"><strong style="color:#fff">Title</strong> — Set a title for your tier list (e.g. "Every Reverb I've Ever Owned"). Shows up on the canvas and in the exported image.</span></div>
-      <div class="help-item"><span class="help-icon">📸</span><span class="help-text"><strong style="color:#fff">Export</strong> — Renders your tier list as a PNG image with the graph paper background, ready to share.</span></div>
-      <div class="help-item"><span class="help-icon">💾</span><span class="help-text"><strong style="color:#fff">Save</strong> — Downloads your tier list as a JSON file so you can back it up or share the raw data.</span></div>
+      <div class="help-item"><span class="help-icon">📸</span><span class="help-text"><strong style="color:#fff">Export (PNG)</strong> — Renders your tier list as a PNG image with the graph paper background, ready to share.</span></div>
+      <div class="help-item"><span class="help-icon">💾</span><span class="help-text"><strong style="color:#fff">Save (JSON)</strong> — Downloads your tier list as a JSON file so you can back it up or share the raw data.</span></div>
       <div class="help-item"><span class="help-icon">📂</span><span class="help-text"><strong style="color:#fff">Load</strong> — Load a previously saved JSON tier list file.</span></div>
       <div class="help-item"><span class="help-icon">🗑</span><span class="help-text"><strong style="color:#fff">Clear</strong> — Remove all pedals from every tier and start fresh.</span></div>
       <div class="help-item"><span class="help-icon">↔️</span><span class="help-text"><strong style="color:#fff">Reorder</strong> — Drag pedals to reorder within a tier or move them between tiers. On mobile, long-press or swipe to start dragging.</span></div>
@@ -466,7 +475,7 @@
 
     <div class="section" style="margin-bottom:0;">
       <div class="section-title">Credits</div>
-      Built by <a href="https://www.instagram.com/pedalboardom/" target="_blank" rel="noopener">Jeremy Abramson</a> (aka <strong style="color:#fff">Pedalboardom</strong>).<br>
+      Built by <a href="https://www.instagram.com/pedalboardom/" target="_blank" rel="noopener">Jeremy Abramson</a> (aka <a href="https://www.instagram.com/pedalboardom/" target="_blank" rel="noopener"><strong style="color:#fff">Pedalboardom</strong></a>).<br>
       Pedal data &amp; images by <a href="https://github.com/PedalPlayground/pedalplayground" target="_blank" rel="noopener">Pedal Playground</a>.
     </div>
 
@@ -852,7 +861,7 @@ function autoSave() {
 function saveTierList() {
   const blob = new Blob([JSON.stringify({ tiers: tierData, title: canvasTitle }, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = 'ivanizer.json';
+  a.href = URL.createObjectURL(blob); a.download = getFilename('json');
   a.click(); URL.revokeObjectURL(a.href);
 }
 function loadTierList() {
@@ -995,7 +1004,7 @@ async function exportImage() {
 
 function downloadExport() {
   if (!window._exportCanvas) return;
-  const a = document.createElement('a'); a.download = 'ivanizer.png';
+  const a = document.createElement('a'); a.download = getFilename('png');
   a.href = window._exportCanvas.toDataURL('image/png'); a.click();
 }
 function closeExport() {
@@ -1005,6 +1014,13 @@ function closeExport() {
 
 // ─── Util ───
 function escHtml(s) { const d = document.createElement('div'); d.textContent = s||''; return d.innerHTML; }
+function getFilename(ext) {
+  if (canvasTitle) {
+    const slug = canvasTitle.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 60);
+    return slug + '.' + ext;
+  }
+  return 'ivanizer.' + ext;
+}
 
 // ─── Boot ───
 init();
