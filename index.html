@@ -6,34 +6,78 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="screen-orientation" content="landscape">
-<title>Ivanizer: Presented by Pedalboardom</title>
+<title>PRanker — Pedal Ranker by Pedalboardom</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'VCR OSD Mono';
+    src: url('vcr-osd-mono.ttf') format('truetype');
+    font-weight: normal; font-style: normal; font-display: swap;
+  }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
+    --bg: #f5f5f0;
+    --grid-line: transparent;
+    --grid-line-major: transparent;
+    --label-w: 120px;
+    --label-font: 'Bebas Neue', sans-serif;
+    --label-size: clamp(20px, 3vw, 42px);
+    --label-color: #fff;
+    --ui-font: 'DM Sans', sans-serif;
+    --panel-bg: rgba(25, 25, 30, 0.94);
+    --panel-border: rgba(255,255,255,0.08);
+    --title-font: 'DM Sans', sans-serif;
+    --accent: #e67e22;
+  }
+
+  /* ═══ MODE: DEFAULT (4 tier) ═══ */
+  body.mode-default {
+    --bg: #f5f5f0;
+    --label-font: 'Bebas Neue', sans-serif;
+    --label-size: clamp(20px, 3vw, 42px);
+    --label-color: #fff;
+    --ui-font: 'DM Sans', sans-serif;
+    --title-font: 'DM Sans', sans-serif;
+    --panel-bg: rgba(25, 25, 30, 0.94);
+    --accent: #e67e22;
+    background-image: none !important;
+  }
+
+  /* ═══ MODE: MEME (S/A/B/C/D/E/F) ═══ */
+  body.mode-meme {
+    --bg: #1a1a2e;
+    --label-font: 'Bebas Neue', sans-serif;
+    --label-size: clamp(22px, 3.5vw, 48px);
+    --label-color: #111;
+    --ui-font: 'DM Sans', sans-serif;
+    --title-font: 'DM Sans', sans-serif;
+    --panel-bg: rgba(20, 20, 40, 0.95);
+    --accent: #e74c3c;
+    background-image: none !important;
+  }
+
+  /* ═══ MODE: CYBERATTACK ═══ */
+  body.mode-cyberattack {
     --bg: #e8f4f8;
     --grid-line: rgba(0, 190, 220, 0.25);
     --grid-line-major: rgba(0, 190, 220, 0.45);
-    --ultra-color: #ff2d55;
-    --high-color: #5856d6;
-    --mid-color: #34c759;
-    --low-color: #007aff;
+    --label-font: 'VCR OSD Mono', 'Press Start 2P', monospace;
+    --label-size: clamp(12px, 2.5vw, 26px);
+    --label-color: #fff;
+    --ui-font: 'Space Mono', monospace;
+    --title-font: 'VCR OSD Mono', 'Press Start 2P', monospace;
     --panel-bg: rgba(15, 20, 30, 0.92);
-    --panel-border: rgba(255,255,255,0.08);
+    --accent: #ff2d55;
     --label-w: 150px;
   }
 
-  html, body {
-    height: 100%;
-    overflow: hidden;
-    overscroll-behavior: none;
-    -webkit-overflow-scrolling: touch;
-  }
+  html, body { height:100%; overflow:hidden; overscroll-behavior:none; -webkit-overflow-scrolling:touch; }
 
   body {
-    font-family: 'Space Mono', monospace;
+    font-family: var(--ui-font);
     background-color: var(--bg);
     background-image:
       linear-gradient(var(--grid-line) 1px, transparent 1px),
@@ -41,371 +85,274 @@
       linear-gradient(var(--grid-line-major) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid-line-major) 1px, transparent 1px);
     background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column; transition: background-color 0.3s;
   }
 
   /* ─── Rotate prompt ─── */
   #rotate-prompt {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 10000;
-    background: var(--panel-bg);
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    color: #fff;
-    text-align: center;
-    padding: 30px;
+    display:none; position:fixed; inset:0; z-index:10000;
+    background:var(--panel-bg); flex-direction:column; align-items:center;
+    justify-content:center; gap:20px; color:#fff; text-align:center; padding:30px;
   }
-  #rotate-prompt .rotate-icon { font-size: 64px; animation: wiggle 1.5s ease-in-out infinite; }
-  #rotate-prompt h2 { font-family: 'Press Start 2P', monospace; font-size: 14px; line-height: 1.8; }
-  #rotate-prompt p { color: rgba(255,255,255,0.5); font-size: 12px; max-width: 300px; }
+  #rotate-prompt .rotate-icon { font-size:64px; animation:wiggle 1.5s ease-in-out infinite; }
+  #rotate-prompt h2 { font-family:var(--label-font); font-size:18px; line-height:1.6; }
+  #rotate-prompt p { color:rgba(255,255,255,0.5); font-size:12px; max-width:300px; }
   #rotate-prompt .dismiss-btn {
-    margin-top: 8px; padding: 12px 28px;
-    border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
-    background: rgba(255,255,255,0.08); color: #fff;
-    font-family: 'Space Mono', monospace; font-size: 12px;
-    cursor: pointer; -webkit-tap-highlight-color: transparent;
+    padding:12px 28px; border:1px solid rgba(255,255,255,0.2); border-radius:8px;
+    background:rgba(255,255,255,0.08); color:#fff; font-family:var(--ui-font);
+    font-size:13px; cursor:pointer; -webkit-tap-highlight-color:transparent;
   }
-  @keyframes wiggle {
-    0%,100% { transform: rotate(0deg); }
-    25% { transform: rotate(-15deg); }
-    75% { transform: rotate(15deg); }
-  }
-  @media (orientation: portrait) and (max-width: 900px) {
-    #rotate-prompt.auto-show { display: flex; }
-  }
+  @keyframes wiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-15deg)} 75%{transform:rotate(15deg)} }
+  @media (orientation:portrait) and (max-width:900px) { #rotate-prompt.auto-show{display:flex;} }
 
   /* ─── Toolbar ─── */
   #toolbar {
-    position: relative; z-index: 100;
-    display: flex; align-items: center; gap: 8px;
-    padding: 6px 10px;
-    background: var(--panel-bg); backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--panel-border);
-    flex-shrink: 0; flex-wrap: nowrap;
+    position:relative; z-index:100; display:flex; align-items:center; gap:8px;
+    padding:6px 10px; background:var(--panel-bg); backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--panel-border); flex-shrink:0; flex-wrap:nowrap;
   }
   #toolbar h1 {
-    font-family: 'Press Start 2P', monospace; font-size: 11px;
-    color: #fff; white-space: nowrap; letter-spacing: 1px; flex-shrink: 0;
+    font-family:var(--title-font); font-size:14px;
+    color:#fff; white-space:nowrap; letter-spacing:1px; flex-shrink:0;
   }
+  body.mode-cyberattack #toolbar h1 { font-size:11px; }
   .toolbar-sub {
-    color: rgba(255,255,255,0.35); font-size: 9px;
-    font-style: italic; white-space: nowrap; margin-left: -4px;
+    color:rgba(255,255,255,0.35); font-size:9px;
+    font-style:italic; white-space:nowrap; margin-left:-4px;
   }
 
-  #search-wrap { position: relative; flex: 1; min-width: 140px; max-width: 480px; }
+  #search-wrap { position:relative; flex:1; min-width:120px; max-width:420px; }
   #search-input {
-    width: 100%; padding: 7px 10px 7px 30px;
-    border: 1px solid rgba(255,255,255,0.15); border-radius: 6px;
-    background: rgba(255,255,255,0.07); color: #fff;
-    font-family: 'Space Mono', monospace; font-size: 13px;
-    outline: none; -webkit-appearance: none;
+    width:100%; padding:7px 10px 7px 30px;
+    border:1px solid rgba(255,255,255,0.15); border-radius:6px;
+    background:rgba(255,255,255,0.07); color:#fff;
+    font-family:var(--ui-font); font-size:13px;
+    outline:none; -webkit-appearance:none;
   }
-  #search-input::placeholder { color: rgba(255,255,255,0.35); }
-  #search-input:focus { border-color: rgba(255,255,255,0.4); }
+  #search-input::placeholder { color:rgba(255,255,255,0.35); }
+  #search-input:focus { border-color:rgba(255,255,255,0.4); }
   #search-wrap::before {
-    content: '⌕'; position: absolute; left: 9px; top: 50%;
-    transform: translateY(-50%); color: rgba(255,255,255,0.35);
-    font-size: 14px; pointer-events: none;
+    content:'⌕'; position:absolute; left:9px; top:50%;
+    transform:translateY(-50%); color:rgba(255,255,255,0.35);
+    font-size:14px; pointer-events:none;
   }
 
   #results-dropdown {
-    display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
-    max-height: min(360px, 55vh); overflow-y: auto; -webkit-overflow-scrolling: touch;
-    background: var(--panel-bg); backdrop-filter: blur(20px);
-    border: 1px solid var(--panel-border); border-radius: 8px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.5); z-index: 200;
+    display:none; position:absolute; top:calc(100% + 4px); left:0; right:0;
+    max-height:min(360px,55vh); overflow-y:auto; -webkit-overflow-scrolling:touch;
+    background:var(--panel-bg); backdrop-filter:blur(20px);
+    border:1px solid var(--panel-border); border-radius:8px;
+    box-shadow:0 12px 40px rgba(0,0,0,0.5); z-index:200;
   }
   .result-item {
-    display: flex; align-items: center; gap: 8px; padding: 7px 10px;
-    cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.04);
-    -webkit-tap-highlight-color: transparent;
+    display:flex; align-items:center; gap:8px; padding:7px 10px;
+    cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.04);
+    -webkit-tap-highlight-color:transparent;
   }
-  .result-item:hover, .result-item.active { background: rgba(255,255,255,0.08); }
-  .result-item img {
-    width: 30px; height: 30px; object-fit: contain;
-    border-radius: 3px; background: rgba(255,255,255,0.06); flex-shrink: 0;
-  }
-  .result-item .pedal-info { flex: 1; min-width: 0; }
-  .result-item .pedal-name {
-    color: #fff; font-size: 11px; font-weight: 700;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .result-item .pedal-brand { color: rgba(255,255,255,0.45); font-size: 9px; }
+  .result-item:hover,.result-item.active { background:rgba(255,255,255,0.08); }
+  .result-item img { width:30px;height:30px;object-fit:contain;border-radius:3px;background:rgba(255,255,255,0.06);flex-shrink:0; }
+  .result-item .pedal-info { flex:1; min-width:0; }
+  .result-item .pedal-name { color:#fff;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .result-item .pedal-brand { color:rgba(255,255,255,0.45);font-size:9px; }
 
-  .tier-buttons { display: flex; gap: 4px; flex-shrink: 0; }
+  .tier-buttons { display:flex; gap:3px; flex-shrink:0; }
   .tier-btn {
-    width: 32px; height: 32px; border: none; border-radius: 5px;
-    font-family: 'Press Start 2P', monospace; font-size: 9px;
-    cursor: pointer; color: #fff; opacity: 0.85;
-    -webkit-tap-highlight-color: transparent;
-    display: flex; align-items: center; justify-content: center;
+    min-width:26px; height:28px; border:none; border-radius:4px;
+    font-family:var(--ui-font); font-size:10px; font-weight:700;
+    cursor:pointer; color:#fff; opacity:0.85;
+    -webkit-tap-highlight-color:transparent;
+    display:flex; align-items:center; justify-content:center; padding:0 4px;
   }
-  .tier-btn:hover, .tier-btn:active { opacity: 1; transform: scale(1.1); }
-  .tier-btn[data-tier="ultra"] { background: var(--ultra-color); }
-  .tier-btn[data-tier="high"]  { background: var(--high-color); }
-  .tier-btn[data-tier="mid"]   { background: var(--mid-color); }
-  .tier-btn[data-tier="low"]   { background: var(--low-color); }
+  .tier-btn:hover,.tier-btn:active { opacity:1; transform:scale(1.08); }
 
-  .toolbar-actions { display: flex; gap: 5px; margin-left: auto; flex-shrink: 0; }
+  .toolbar-actions { display:flex; gap:5px; margin-left:auto; flex-shrink:0; }
   .action-btn {
-    padding: 6px 10px;
-    border: 1px solid rgba(255,255,255,0.15); border-radius: 6px;
-    background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7);
-    font-family: 'Space Mono', monospace; font-size: 11px;
-    cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent;
-    transition: all 0.2s;
+    padding:6px 10px; border:1px solid rgba(255,255,255,0.15); border-radius:6px;
+    background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.7);
+    font-family:var(--ui-font); font-size:11px; cursor:pointer;
+    white-space:nowrap; -webkit-tap-highlight-color:transparent; transition:all 0.2s;
   }
-  .action-btn:hover, .action-btn:active { background: rgba(255,255,255,0.12); color: #fff; }
-  .action-btn.danger:hover, .action-btn.danger:active { background: rgba(255,50,50,0.3); border-color: rgba(255,50,50,0.4); }
-  .action-btn .btn-label { display: inline; }
+  .action-btn:hover,.action-btn:active { background:rgba(255,255,255,0.12); color:#fff; }
+  .action-btn.danger:hover,.action-btn.danger:active { background:rgba(255,50,50,0.3); border-color:rgba(255,50,50,0.4); }
+  .action-btn .btn-label { display:inline; }
+
+  #mode-select {
+    padding:5px 24px 5px 8px; border:1px solid rgba(255,255,255,0.15);
+    border-radius:6px; background:rgba(255,255,255,0.08);
+    color:#fff; font-family:var(--ui-font); font-size:11px;
+    outline:none; cursor:pointer; -webkit-appearance:none; appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.5)'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 8px center; flex-shrink:0;
+  }
+  #mode-select option { background:#222; color:#fff; }
 
   /* ─── Tier area ─── */
-  #tier-container {
-    flex: 1; display: flex; flex-direction: column;
-    padding: 8px; gap: 6px; overflow: hidden;
-  }
+  #tier-container { flex:1;display:flex;flex-direction:column;padding:8px;gap:5px;overflow:hidden; }
   .tier-row {
-    flex: 1; display: flex; align-items: stretch;
-    min-height: 0; border-radius: 6px; overflow: hidden;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.04);
-    transition: box-shadow 0.2s, background 0.2s;
+    flex:1;display:flex;align-items:stretch;min-height:0;border-radius:6px;overflow:hidden;
+    background:rgba(128,128,128,0.06);border:1px solid rgba(128,128,128,0.08);
+    transition:box-shadow 0.2s,background 0.2s;
   }
-  .tier-row.drag-over {
-    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.06);
-  }
+  body.mode-meme .tier-row { background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.06); }
+  .tier-row.drag-over { box-shadow:inset 0 0 0 2px rgba(255,255,255,0.3);background:rgba(128,128,128,0.1); }
   .tier-label {
-    width: var(--label-w); flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(12px, 2.5vw, 28px);
-    color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
-    letter-spacing: 1px; position: relative; user-select: none;
+    width:var(--label-w);flex-shrink:0;display:flex;align-items:center;justify-content:center;
+    font-family:var(--label-font);font-size:var(--label-size);color:var(--label-color);
+    letter-spacing:1px;position:relative;user-select:none;
   }
-  .tier-label::after {
-    content: ''; position: absolute; right: 0; top: 10%; height: 80%;
-    width: 1px; background: rgba(255,255,255,0.1);
-  }
-  .tier-row[data-tier="ultra"] .tier-label { background: linear-gradient(135deg, var(--ultra-color), #ff6b8a); }
-  .tier-row[data-tier="high"]  .tier-label { background: linear-gradient(135deg, var(--high-color), #7a79f0); }
-  .tier-row[data-tier="mid"]   .tier-label { background: linear-gradient(135deg, var(--mid-color), #6ee78a); }
-  .tier-row[data-tier="low"]   .tier-label { background: linear-gradient(135deg, var(--low-color), #4aa3ff); }
+  body.mode-cyberattack .tier-label { text-shadow:2px 2px 0 rgba(0,0,0,0.4); }
+  .tier-label::after { content:'';position:absolute;right:0;top:10%;height:80%;width:1px;background:rgba(128,128,128,0.15); }
 
   .tier-pedals {
-    flex: 1; display: flex; align-items: center; gap: 6px;
-    padding: 4px 10px; min-height: 0;
-    overflow-x: auto; overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent;
+    flex:1;display:flex;align-items:center;gap:6px;padding:4px 10px;min-height:0;
+    overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;scrollbar-color:rgba(128,128,128,0.15) transparent;
   }
-  .tier-pedals::-webkit-scrollbar { height: 3px; }
-  .tier-pedals::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
-  .tier-pedals .empty-hint {
-    color: rgba(0,0,0,0.2); font-size: 10px;
-    font-style: italic; white-space: nowrap;
-    user-select: none; pointer-events: none;
-  }
+  .tier-pedals::-webkit-scrollbar { height:3px; }
+  .tier-pedals::-webkit-scrollbar-thumb { background:rgba(128,128,128,0.15);border-radius:2px; }
+  .tier-pedals .empty-hint { color:rgba(128,128,128,0.35);font-size:10px;font-style:italic;white-space:nowrap;user-select:none;pointer-events:none; }
+  body.mode-meme .tier-pedals .empty-hint { color:rgba(255,255,255,0.2); }
 
   /* ─── Pedal cards ─── */
   .pedal-card {
-    position: relative; flex-shrink: 0;
-    height: calc(100% - 4px); aspect-ratio: var(--pedal-ar, 0.75);
-    cursor: grab; border-radius: 3px; overflow: hidden;
-    user-select: none; -webkit-user-select: none;
-    -webkit-tap-highlight-color: transparent; touch-action: none;
-    transition: transform 0.15s, opacity 0.15s, box-shadow 0.15s;
+    position:relative;flex-shrink:0;height:calc(100% - 4px);aspect-ratio:var(--pedal-ar,0.75);
+    cursor:grab;border-radius:3px;overflow:hidden;user-select:none;-webkit-user-select:none;
+    -webkit-tap-highlight-color:transparent;touch-action:none;
+    transition:transform 0.15s,opacity 0.15s,box-shadow 0.15s;
   }
-  .pedal-card:hover { transform: scale(1.06); z-index: 10; box-shadow: 0 4px 20px rgba(0,0,0,0.35); }
-  .pedal-card:active { cursor: grabbing; }
-  .pedal-card.dragging { opacity: 0.2; transform: scale(0.92); }
-  .pedal-card img {
-    width: 100%; height: 100%; object-fit: contain;
-    pointer-events: none; display: block; -webkit-user-drag: none;
-  }
+  .pedal-card:hover { transform:scale(1.06);z-index:10;box-shadow:0 4px 20px rgba(0,0,0,0.35); }
+  .pedal-card:active { cursor:grabbing; }
+  .pedal-card.dragging { opacity:0.2;transform:scale(0.92); }
+  .pedal-card img { width:100%;height:100%;object-fit:contain;pointer-events:none;display:block;-webkit-user-drag:none; }
   .pedal-card .remove-btn {
-    position: absolute; top: 1px; right: 1px;
-    width: 22px; height: 22px; border-radius: 50%; border: none;
-    background: rgba(0,0,0,0.75); color: #fff; font-size: 13px;
-    line-height: 22px; text-align: center; cursor: pointer;
-    opacity: 0; z-index: 5; -webkit-tap-highlight-color: transparent;
+    position:absolute;top:1px;right:1px;width:22px;height:22px;border-radius:50%;border:none;
+    background:rgba(0,0,0,0.75);color:#fff;font-size:13px;line-height:22px;text-align:center;
+    cursor:pointer;opacity:0;z-index:5;-webkit-tap-highlight-color:transparent;
   }
-  .pedal-card:hover .remove-btn, .pedal-card.show-remove .remove-btn { opacity: 1; }
-  .pedal-card .remove-btn:hover { background: var(--ultra-color); }
+  .pedal-card:hover .remove-btn,.pedal-card.show-remove .remove-btn { opacity:1; }
+  .pedal-card .remove-btn:hover { background:#e74c3c; }
   .pedal-card .pedal-tooltip {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 2px 3px; background: rgba(0,0,0,0.75); color: #fff;
-    font-size: 7px; font-family: 'Space Mono', monospace;
-    text-align: center; white-space: nowrap; overflow: hidden;
-    text-overflow: ellipsis; opacity: 0; pointer-events: none;
+    position:absolute;bottom:0;left:0;right:0;padding:2px 3px;background:rgba(0,0,0,0.75);color:#fff;
+    font-size:7px;font-family:var(--ui-font);text-align:center;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis;opacity:0;pointer-events:none;
   }
-  .pedal-card:hover .pedal-tooltip, .pedal-card.show-remove .pedal-tooltip { opacity: 1; }
+  .pedal-card:hover .pedal-tooltip,.pedal-card.show-remove .pedal-tooltip { opacity:1; }
 
-  /* Touch ghost */
-  #touch-ghost {
-    position: fixed; z-index: 9999; pointer-events: none;
-    opacity: 0.85; border-radius: 4px; overflow: hidden;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5); transform: scale(1.1);
-  }
-  #touch-ghost img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  #touch-ghost { position:fixed;z-index:9999;pointer-events:none;opacity:0.85;border-radius:4px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.5);transform:scale(1.1); }
+  #touch-ghost img { width:100%;height:100%;object-fit:contain;display:block; }
+  .drag-placeholder { flex-shrink:0;height:calc(100% - 4px);width:40px;border:2px dashed rgba(128,128,128,0.2);border-radius:4px;background:rgba(128,128,128,0.05); }
 
-  .drag-placeholder {
-    flex-shrink: 0; height: calc(100% - 4px); width: 40px;
-    border: 2px dashed rgba(0,0,0,0.15); border-radius: 4px;
-    background: rgba(0,0,0,0.04);
-  }
+  #title-banner { display:none;padding:4px 12px;text-align:center;flex-shrink:0; }
+  #title-banner.visible { display:block; }
+  #title-banner span { font-family:var(--title-font);font-size:clamp(12px,2.5vw,22px);color:rgba(0,0,0,0.55);letter-spacing:1px; }
+  body.mode-meme #title-banner span { color:rgba(255,255,255,0.6); }
+  body.mode-cyberattack #title-banner span { text-shadow:1px 1px 0 rgba(255,255,255,0.3); }
 
   /* ─── Loading ─── */
   #loading {
-    position: fixed; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    background: var(--panel-bg); z-index: 9999; gap: 12px;
-    transition: opacity 0.4s;
+    position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(25,25,30,0.96);z-index:9999;gap:12px;transition:opacity 0.4s;
   }
-  #loading.hidden { opacity: 0; pointer-events: none; }
-  #loading h2 { font-family: 'Press Start 2P', monospace; font-size: 16px; color: #fff; }
-  #loading .sub { color: rgba(255,255,255,0.35); font-size: 10px; font-style: italic; }
-  .spinner {
-    width: 28px; height: 28px;
-    border: 3px solid rgba(255,255,255,0.1); border-top-color: #fff;
-    border-radius: 50%; animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading.hidden { opacity:0;pointer-events:none; }
+  #loading h2 { font-family:'DM Sans',sans-serif;font-size:22px;color:#fff;font-weight:700;letter-spacing:1px; }
+  #loading .sub { color:rgba(255,255,255,0.35);font-size:11px; }
+  .spinner { width:28px;height:28px;border:3px solid rgba(255,255,255,0.1);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg)} }
 
-  /* ─── Modals (shared) ─── */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.6); z-index: 500;
-    align-items: center; justify-content: center; padding: 10px;
-  }
-  .modal-overlay.active { display: flex; }
+  /* ─── Modals ─── */
+  .modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;align-items:center;justify-content:center;padding:10px; }
+  .modal-overlay.active { display:flex; }
   .modal-panel {
-    background: var(--panel-bg);
-    border: 1px solid var(--panel-border); border-radius: 12px;
-    padding: 20px; max-width: 94vw; max-height: 92vh;
-    overflow: auto; -webkit-overflow-scrolling: touch;
-    color: rgba(255,255,255,0.8); font-size: 13px; line-height: 1.7;
+    background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:12px;
+    padding:20px;max-width:94vw;max-height:92vh;overflow:auto;-webkit-overflow-scrolling:touch;
+    color:rgba(255,255,255,0.8);font-size:13px;line-height:1.7;
   }
-  .modal-panel h3 {
-    font-family: 'Press Start 2P', monospace; font-size: 11px;
-    color: #fff; margin-bottom: 14px; text-align: center;
-  }
-  .modal-panel .btn-row {
-    display: flex; gap: 10px; justify-content: center;
-    flex-wrap: wrap; margin-top: 16px;
-  }
+  .modal-panel h3 { font-family:var(--title-font);font-size:14px;color:#fff;margin-bottom:14px;text-align:center;letter-spacing:1px; }
+  body.mode-cyberattack .modal-panel h3 { font-size:11px; }
+  .modal-panel .btn-row { display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px; }
 
-  /* ─── About modal specifics ─── */
-  #about-panel { max-width: 560px; }
-  #about-panel a { color: #5ac8fa; text-decoration: none; }
-  #about-panel a:hover { text-decoration: underline; }
-  #about-panel .section { margin-bottom: 14px; }
-  #about-panel .section-title {
-    font-family: 'Press Start 2P', monospace; font-size: 8px;
-    color: rgba(255,255,255,0.45); text-transform: uppercase;
-    letter-spacing: 1px; margin-bottom: 6px;
-  }
-  #about-panel .help-item {
-    display: flex; align-items: baseline; gap: 8px; margin: 4px 0;
-  }
-  #about-panel .help-icon { font-size: 14px; flex-shrink: 0; width: 22px; text-align: center; }
-  #about-panel .help-text { flex: 1; font-size: 12px; }
+  #about-panel { max-width:580px; }
+  #about-panel a { color:#5ac8fa;text-decoration:none; }
+  #about-panel a:hover { text-decoration:underline; }
+  #about-panel .section { margin-bottom:14px; }
+  #about-panel .section-title { font-weight:700;font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px; }
+  body.mode-cyberattack #about-panel .section-title { font-family:'Press Start 2P',monospace;font-size:8px; }
+  #about-panel .help-item { display:flex;align-items:baseline;gap:8px;margin:4px 0; }
+  #about-panel .help-icon { font-size:14px;flex-shrink:0;width:22px;text-align:center; }
+  #about-panel .help-text { flex:1;font-size:12px; }
 
-  /* ─── Title input modal ─── */
-  #title-panel { max-width: 480px; text-align: center; }
+  #title-panel { max-width:480px;text-align:center; }
   #title-input {
-    width: 100%; padding: 10px 14px; margin: 10px 0;
-    border: 1px solid rgba(255,255,255,0.2); border-radius: 6px;
-    background: rgba(255,255,255,0.08); color: #fff;
-    font-family: 'Space Mono', monospace; font-size: 14px;
-    outline: none; -webkit-appearance: none;
+    width:100%;padding:10px 14px;margin:10px 0;border:1px solid rgba(255,255,255,0.2);border-radius:6px;
+    background:rgba(255,255,255,0.08);color:#fff;font-family:var(--ui-font);font-size:14px;
+    outline:none;-webkit-appearance:none;
   }
-  #title-input::placeholder { color: rgba(255,255,255,0.3); }
-  #title-input:focus { border-color: rgba(255,255,255,0.4); }
+  #title-input::placeholder { color:rgba(255,255,255,0.3); }
+  #title-input:focus { border-color:rgba(255,255,255,0.4); }
 
-  /* ─── Title banner on canvas ─── */
-  #title-banner {
-    display: none;
-    padding: 4px 12px;
-    text-align: center;
-    flex-shrink: 0;
-  }
-  #title-banner.visible { display: block; }
-  #title-banner span {
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(10px, 2vw, 18px);
-    color: rgba(0,0,0,0.55);
-    text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
-    letter-spacing: 1px;
-  }
-
-  /* ─── Export ─── */
-  #export-canvas-wrap {
-    max-width: 88vw; max-height: 55vh; overflow: auto;
-    margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 6px; -webkit-overflow-scrolling: touch;
-  }
-  #export-canvas-wrap canvas { display: block; max-width: 100%; height: auto; }
+  #export-canvas-wrap { max-width:88vw;max-height:55vh;overflow:auto;margin-bottom:12px;border:1px solid rgba(255,255,255,0.1);border-radius:6px;-webkit-overflow-scrolling:touch; }
+  #export-canvas-wrap canvas { display:block;max-width:100%;height:auto; }
 
   /* ─── Responsive ─── */
-  @media (max-width: 700px) {
-    :root { --label-w: 80px; }
-    #toolbar h1 { font-size: 8px; }
-    .toolbar-sub { display: none; }
-    .action-btn .btn-label { display: none; }
-    .action-btn { padding: 6px 8px; font-size: 14px; min-width: 34px; text-align: center; }
-    #search-input { font-size: 12px; padding: 6px 8px 6px 26px; }
-    #search-wrap::before { left: 7px; font-size: 12px; }
-    .tier-label { font-size: clamp(8px, 2vw, 14px); letter-spacing: 0; }
-    #tier-container { padding: 4px; gap: 4px; }
+  @media (max-width:700px) {
+    :root { --label-w:70px; }
+    body.mode-cyberattack { --label-w:80px; }
+    #toolbar h1 { font-size:10px; }
+    body.mode-cyberattack #toolbar h1 { font-size:8px; }
+    .toolbar-sub { display:none; }
+    .action-btn .btn-label { display:none; }
+    .action-btn { padding:6px 8px;font-size:14px;min-width:34px;text-align:center; }
+    #search-input { font-size:12px;padding:6px 8px 6px 26px; }
+    #search-wrap::before { left:7px;font-size:12px; }
+    #tier-container { padding:4px;gap:4px; }
+    #mode-select { font-size:10px;padding:4px 20px 4px 6px; }
+    .mode-label { display:none; }
   }
-  @media (max-height: 420px) {
-    #toolbar { padding: 3px 6px; gap: 5px; }
-    #toolbar h1 { display: none; }
-    .toolbar-sub { display: none; }
-    #tier-container { padding: 3px; gap: 3px; }
-    .tier-pedals { padding: 2px 4px; gap: 4px; }
-    #title-banner { padding: 2px 8px; }
+  @media (max-height:420px) {
+    #toolbar { padding:3px 6px;gap:5px; }
+    #toolbar h1 { display:none; }
+    .toolbar-sub { display:none; }
+    #tier-container { padding:3px;gap:2px; }
+    .tier-pedals { padding:2px 4px;gap:4px; }
+    #title-banner { padding:2px 8px; }
   }
-  @media (max-width: 500px) {
-    :root { --label-w: 56px; }
-    #toolbar h1 { display: none; }
-    .toolbar-sub { display: none; }
-    .tier-label { font-size: 8px; }
+  @media (max-width:500px) {
+    :root { --label-w:50px; }
+    body.mode-cyberattack { --label-w:56px; }
+    #toolbar h1 { display:none; }
+    .toolbar-sub { display:none; }
+    .mode-label { display:none; }
   }
 </style>
 </head>
-<body>
+<body class="mode-default">
 
-<!-- Rotate prompt -->
 <div id="rotate-prompt" class="auto-show">
   <div class="rotate-icon">📱↻</div>
-  <h2>ROTATE YOUR<br>DEVICE</h2>
+  <h2>ROTATE YOUR DEVICE</h2>
   <p>This app works best in landscape orientation.</p>
   <button class="dismiss-btn" onclick="dismissRotate()">Continue Anyway</button>
 </div>
 
-<!-- Loading -->
 <div id="loading">
-  <h2>IVANIZER</h2>
-  <span class="sub">Presented by Pedalboardom</span>
+  <h2>P<span style="opacity:0.4;font-weight:400;">[edal]</span> Ranker</h2>
+  <span class="sub">by Pedalboardom</span>
   <div class="spinner"></div>
   <span style="color:rgba(255,255,255,0.4);font-size:11px;">Loading pedal database…</span>
 </div>
 
-<!-- Toolbar -->
 <div id="toolbar">
-  <h1>⚡ IVANIZER</h1>
-  <span class="toolbar-sub">by Pedalboardom</span>
+  <h1>P<span style="opacity:0.45;font-weight:400;">edal</span> Ranker</h1>
+  <a href="https://www.instagram.com/pedalboardom/" target="_blank" rel="noopener" class="toolbar-sub" style="color:rgba(255,255,255,0.4);font-size:9px;text-decoration:none;white-space:nowrap;margin-left:-4px;line-height:1;flex-shrink:0;">by Pedalboardom</a>
   <div id="search-wrap">
     <input type="text" id="search-input" placeholder="Search pedals…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     <div id="results-dropdown"></div>
   </div>
+  <select id="mode-select" onchange="switchMode(this.value)">
+    <option value="default">Default</option>
+    <option value="meme">Meme (S–F)</option>
+    <option value="cyberattack">Cyberattack</option>
+  </select>
   <button class="action-btn" onclick="showAbout()" style="flex-shrink:0;">ℹ️<span class="btn-label"> About</span></button>
   <div class="toolbar-actions">
     <button class="action-btn" onclick="showTitleModal()">✏️<span class="btn-label"> Title</span></button>
@@ -416,73 +363,61 @@
   </div>
 </div>
 
-<!-- Title banner -->
 <div id="title-banner"><span id="title-display"></span></div>
+<div id="tier-container"></div>
 
-<!-- Tier rows -->
-<div id="tier-container">
-  <div class="tier-row" data-tier="ultra">
-    <div class="tier-label">ULTRA</div>
-    <div class="tier-pedals" id="tier-ultra"><span class="empty-hint">Search &amp; add pedals →</span></div>
-  </div>
-  <div class="tier-row" data-tier="high">
-    <div class="tier-label">HIGH</div>
-    <div class="tier-pedals" id="tier-high"><span class="empty-hint">Search &amp; add pedals →</span></div>
-  </div>
-  <div class="tier-row" data-tier="mid">
-    <div class="tier-label">MID</div>
-    <div class="tier-pedals" id="tier-mid"><span class="empty-hint">Search &amp; add pedals →</span></div>
-  </div>
-  <div class="tier-row" data-tier="low">
-    <div class="tier-label">LOW</div>
-    <div class="tier-pedals" id="tier-low"><span class="empty-hint">Search &amp; add pedals →</span></div>
-  </div>
-</div>
-
-<!-- About modal -->
+<!-- About -->
 <div id="about-overlay" class="modal-overlay">
   <div id="about-panel" class="modal-panel">
-    <h3>ABOUT IVANIZER</h3>
+    <h3>ABOUT PRANKER</h3>
 
     <div class="section">
       <div class="section-title">What is this?</div>
-      <strong style="color:#fff">Ivan Anderson</strong> is a professional musician (<a href="https://sweetfix.bandcamp.com/music" target="_blank" rel="noopener">Sweet Fix</a>, <a href="https://cyberattack.bandcamp.com/music" target="_blank" rel="noopener">Cyberattack</a>).
-      He also has <a href="https://www.youtube.com/@CyberattackWorld" target="_blank" rel="noopener">YouTube channel</a>
-      where, in addition to demoing pedals, he often makes pedal "ranking" videos — sorting
-      various categories of guitar pedals into tiers.  
-      The Ivanizer is an homage to that format, letting you build your own pedal tier lists
-      using the same layout.
+      PRanker (Pedal Ranker) lets you build visual tier-ranking lists for your guitar pedals.
+      Search the database, drop pedals into tiers, drag to reorder, then export a shareable image.
     </div>
 
     <div class="section">
-      <div class="section-title">Ivan's tier definitions</div>
-      <p style="margin-bottom:8px;">You can use any tier ranking you'd like, but to get you started, here's Ivan's:</p>
-      <div class="help-item"><span class="help-icon" style="color:var(--ultra-color);font-weight:bold;">U</span><span class="help-text"><strong style="color:var(--ultra-color)">Ultra</strong> — These are pedals that define "your sound." Without these, you couldn't do what you do.</span></div>
-      <div class="help-item"><span class="help-icon" style="color:var(--high-color);font-weight:bold;">H</span><span class="help-text"><strong style="color:var(--high-color)">High</strong> — These are pedals that have been on a gig board, or appeared on a record.</span></div>
-      <div class="help-item"><span class="help-icon" style="color:var(--mid-color);font-weight:bold;">M</span><span class="help-text"><strong style="color:var(--mid-color)">Mid</strong> — These are pedals you still own, but have not appeared on a record or gigged with (yet).</span></div>
-      <div class="help-item"><span class="help-icon" style="color:var(--low-color);font-weight:bold;">L</span><span class="help-text"><strong style="color:var(--low-color)">Low</strong> — These are pedals you had, but got rid of at some point.</span></div>
+      <div class="section-title">Modes</div>
+      <p style="margin-bottom:6px;">
+        <strong style="color:#fff">Default</strong> sorts pedals into four tiers: Ultra, High, Mid, and Low — a simple way to rank what matters most to you.
+      </p>
+      <p style="margin-bottom:6px;">
+        <strong style="color:#fff">Meme</strong> uses the classic internet tier-list format (S through F) for more granularity.
+        When switching between modes, pedals are remapped automatically.
+      </p>
+      <p>
+        <strong style="color:#fff">Cyberattack</strong> mode is an homage to one of my favorite
+        <a href="https://www.youtube.com/@CyberattackWorld" target="_blank" rel="noopener">YouTube pedal demo channels</a>.
+        For the true Cyberattack experience, you should use these tier definitions:
+      </p>
+      <div style="margin-top:8px;">
+        <div class="help-item"><span class="help-icon" style="color:#ff2d55;font-weight:bold;">U</span><span class="help-text"><strong style="color:#ff2d55">Ultra</strong> — Pedals that define "your sound." Without these, you couldn't do what you do.</span></div>
+        <div class="help-item"><span class="help-icon" style="color:#5856d6;font-weight:bold;">H</span><span class="help-text"><strong style="color:#5856d6">High</strong> — Pedals that have been on a gig board, or appeared on a record.</span></div>
+        <div class="help-item"><span class="help-icon" style="color:#34c759;font-weight:bold;">M</span><span class="help-text"><strong style="color:#34c759">Mid</strong> — Pedals you still own, but have not appeared on a record or gigged with (yet).</span></div>
+        <div class="help-item"><span class="help-icon" style="color:#007aff;font-weight:bold;">L</span><span class="help-text"><strong style="color:#007aff">Low</strong> — Pedals you had, but got rid of at some point.</span></div>
+      </div>
     </div>
 
     <div class="section">
       <div class="section-title">How to use</div>
-      <div class="help-item"><span class="help-icon">🔍</span><span class="help-text"><strong style="color:#fff">Search</strong> — Type a brand or pedal name to find it, then tap a tier button (U/H/M/L) to add it.</span></div>
-      <div class="help-item"><span class="help-icon">✏️</span><span class="help-text"><strong style="color:#fff">Title</strong> — Set a title for your tier list (e.g. "Every Reverb I've Ever Owned"). Shows up on the canvas and in the exported image.</span></div>
-      <div class="help-item"><span class="help-icon">📸</span><span class="help-text"><strong style="color:#fff">Export (PNG)</strong> — Renders your tier list as a PNG image with the graph paper background, ready to share.</span></div>
-      <div class="help-item"><span class="help-icon">💾</span><span class="help-text"><strong style="color:#fff">Save (JSON)</strong> — Downloads your tier list as a JSON file so you can back it up or share the raw data.</span></div>
-      <div class="help-item"><span class="help-icon">📂</span><span class="help-text"><strong style="color:#fff">Load</strong> — Load a previously saved JSON tier list file.</span></div>
-      <div class="help-item"><span class="help-icon">🗑</span><span class="help-text"><strong style="color:#fff">Clear</strong> — Remove all pedals from every tier and start fresh.</span></div>
-      <div class="help-item"><span class="help-icon">↔️</span><span class="help-text"><strong style="color:#fff">Reorder</strong> — Drag pedals to reorder within a tier or move them between tiers. On mobile, long-press or swipe to start dragging.</span></div>
+      <div class="help-item"><span class="help-icon">🔍</span><span class="help-text"><strong style="color:#fff">Search</strong> — Type a brand or pedal name, then tap a tier button to add it.</span></div>
+      <div class="help-item"><span class="help-icon">✏️</span><span class="help-text"><strong style="color:#fff">Title</strong> — Set a title (e.g. "Every Reverb I've Ever Owned") that appears on the canvas and in exports.</span></div>
+      <div class="help-item"><span class="help-icon">🎨</span><span class="help-text"><strong style="color:#fff">Mode</strong> — Switch between Default, Meme, and Cyberattack. Pedals remap automatically.</span></div>
+      <div class="help-item"><span class="help-icon">📸</span><span class="help-text"><strong style="color:#fff">Export (PNG)</strong> — Render your tier list as a shareable image.</span></div>
+      <div class="help-item"><span class="help-icon">💾</span><span class="help-text"><strong style="color:#fff">Save (JSON)</strong> — Download your tier list data for backup.</span></div>
+      <div class="help-item"><span class="help-icon">📂</span><span class="help-text"><strong style="color:#fff">Load</strong> — Load a previously saved JSON file.</span></div>
+      <div class="help-item"><span class="help-icon">🗑</span><span class="help-text"><strong style="color:#fff">Clear</strong> — Remove all pedals from every tier.</span></div>
+      <div class="help-item"><span class="help-icon">↔️</span><span class="help-text"><strong style="color:#fff">Reorder</strong> — Drag to reorder or move between tiers. On mobile, long-press to start.</span></div>
     </div>
 
     <div class="section" style="margin-bottom:0;">
       <div class="section-title">Credits</div>
-      Built by <a href="https://www.instagram.com/pedalboardom/" target="_blank" rel="noopener">Jeremy Abramson</a> (aka <a href="https://www.instagram.com/pedalboardom/" target="_blank" rel="noopener"><strong style="color:#fff">Pedalboardom</strong></a>).<br>
+      Built by <a href="https://www.instagram.com/pedalboardom/" target="_blank" rel="noopener">Jeremy Abramson</a>
+      (aka <a href="https://www.instagram.com/pedalboardom/" target="_blank" rel="noopener"><strong style="color:#fff">Pedalboardom</strong></a>).<br>
       Pedal data &amp; images by <a href="https://github.com/PedalPlayground/pedalplayground" target="_blank" rel="noopener">Pedal Playground</a>.
     </div>
-
-    <div class="btn-row">
-      <button class="action-btn" onclick="closeAbout()">✕ Close</button>
-    </div>
+    <div class="btn-row"><button class="action-btn" onclick="closeAbout()">✕ Close</button></div>
   </div>
 </div>
 
@@ -490,11 +425,11 @@
 <div id="title-overlay" class="modal-overlay">
   <div id="title-panel" class="modal-panel">
     <h3>SET TITLE</h3>
-    <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:4px;">This title appears above the tiers and on the exported image.</p>
+    <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:4px;">Appears above the tiers and on exported images.</p>
     <input type="text" id="title-input" placeholder="e.g. Every Reverb I've Ever Owned" maxlength="80" autocomplete="off" autocorrect="off" spellcheck="false" />
     <div class="btn-row">
       <button class="action-btn" onclick="applyTitle()">✓ Apply</button>
-      <button class="action-btn" onclick="clearTitle()">🗑 Clear Title</button>
+      <button class="action-btn" onclick="clearTitle()">🗑 Clear</button>
       <button class="action-btn" onclick="closeTitleModal()">✕ Cancel</button>
     </div>
   </div>
@@ -503,7 +438,7 @@
 <!-- Export modal -->
 <div id="export-overlay" class="modal-overlay">
   <div class="modal-panel" style="max-width:94vw;text-align:center;">
-    <h3>EXPORT IVANIZER</h3>
+    <h3>EXPORT</h3>
     <div id="export-canvas-wrap"></div>
     <div class="btn-row">
       <button class="action-btn" onclick="downloadExport()">⬇<span class="btn-label"> Download PNG</span></button>
@@ -512,518 +447,243 @@
   </div>
 </div>
 
-<!-- Touch ghost -->
 <div id="touch-ghost" style="display:none;"></div>
 
 <script>
-// ─── Config ───
 const PEDALS_JSON_URL = 'https://raw.githubusercontent.com/PedalPlayground/pedalplayground/master/public/data/pedals.json';
 const IMAGE_BASE_URL  = 'https://raw.githubusercontent.com/PedalPlayground/pedalplayground/master/public/images/pedals/';
 const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 
-// ─── State ───
+const MODE_CONFIG = {
+  default: {
+    tiers: ['ultra','high','mid','low'],
+    labels: { ultra:'ULTRA', high:'HIGH', mid:'MID', low:'LOW' },
+    colors: { ultra:'#c0392b', high:'#d35400', mid:'#27ae60', low:'#2471a3' },
+    darkText: { ultra:false, high:false, mid:false, low:false },
+    btnLabels: { ultra:'U', high:'H', mid:'M', low:'L' },
+    graphPaper: false,
+    bgExport: '#f5f5f0',
+    gridExport: false,
+    labelFontExport: 'bold 42px "Bebas Neue", sans-serif',
+    titleFontExport: 'bold 24px "DM Sans", sans-serif',
+    watermark: 'PRanker by Pedalboardom',
+  },
+  meme: {
+    tiers: ['s','a','b','c','d','e','f'],
+    labels: { s:'S', a:'A', b:'B', c:'C', d:'D', e:'E', f:'F' },
+    colors: { s:'#ff7f7f', a:'#ffbf7f', b:'#ffdf7f', c:'#ffff7f', d:'#bfff7f', e:'#7fbfff', f:'#ff7fbf' },
+    darkText: { s:true, a:true, b:true, c:true, d:true, e:true, f:true },
+    btnLabels: { s:'S', a:'A', b:'B', c:'C', d:'D', e:'E', f:'F' },
+    graphPaper: false,
+    bgExport: '#1a1a2e',
+    gridExport: false,
+    labelFontExport: 'bold 42px "Bebas Neue", sans-serif',
+    titleFontExport: 'bold 24px "DM Sans", sans-serif',
+    watermark: 'PRanker by Pedalboardom',
+  },
+  cyberattack: {
+    tiers: ['ultra','high','mid','low'],
+    labels: { ultra:'ULTRA', high:'HIGH', mid:'MID', low:'LOW' },
+    colors: { ultra:'#ff2d55', high:'#5856d6', mid:'#34c759', low:'#007aff' },
+    darkText: { ultra:false, high:false, mid:false, low:false },
+    btnLabels: { ultra:'U', high:'H', mid:'M', low:'L' },
+    graphPaper: true,
+    bgExport: '#e8f4f8',
+    gridExport: true,
+    labelFontExport: 'bold 26px "VCR OSD Mono", "Press Start 2P", monospace',
+    titleFontExport: 'bold 22px "VCR OSD Mono", "Press Start 2P", monospace',
+    watermark: 'PRanker by Pedalboardom • pedalplayground.com',
+  },
+};
+
 let allPedals = [];
-let tierData = { ultra: [], high: [], mid: [], low: [] };
+let currentMode = 'default';
+let tierData = {};
 let canvasTitle = '';
 let searchActiveIndex = -1;
 
-// ─── Rotate prompt ───
+function initEmpty(mode) { const td={}; MODE_CONFIG[mode].tiers.forEach(t=>td[t]=[]); return td; }
+
+// Rotate
 let rotateDismissed = false;
-function dismissRotate() {
-  rotateDismissed = true;
-  const el = document.getElementById('rotate-prompt');
-  el.classList.remove('auto-show'); el.style.display = 'none';
-}
-window.addEventListener('resize', () => {
-  if (!rotateDismissed && window.innerWidth > window.innerHeight) dismissRotate();
-});
-try { screen.orientation.lock('landscape').catch(() => {}); } catch(e) {}
+function dismissRotate() { rotateDismissed=true; const el=document.getElementById('rotate-prompt'); el.classList.remove('auto-show');el.style.display='none'; }
+window.addEventListener('resize',()=>{if(!rotateDismissed&&window.innerWidth>window.innerHeight)dismissRotate();});
+try{screen.orientation.lock('landscape').catch(()=>{});}catch(e){}
 
-// ─── About ───
-function showAbout() { document.getElementById('about-overlay').classList.add('active'); }
-function closeAbout() { document.getElementById('about-overlay').classList.remove('active'); }
+// About/Title
+function showAbout(){document.getElementById('about-overlay').classList.add('active');}
+function closeAbout(){document.getElementById('about-overlay').classList.remove('active');}
+function showTitleModal(){document.getElementById('title-input').value=canvasTitle;document.getElementById('title-overlay').classList.add('active');setTimeout(()=>document.getElementById('title-input').focus(),100);}
+function closeTitleModal(){document.getElementById('title-overlay').classList.remove('active');}
+function applyTitle(){canvasTitle=document.getElementById('title-input').value.trim();updateTitleBanner();closeTitleModal();autoSave();}
+function clearTitle(){canvasTitle='';document.getElementById('title-input').value='';updateTitleBanner();closeTitleModal();autoSave();}
+function updateTitleBanner(){const b=document.getElementById('title-banner'),d=document.getElementById('title-display');if(canvasTitle){d.textContent=canvasTitle;b.classList.add('visible');}else b.classList.remove('visible');}
+document.addEventListener('DOMContentLoaded',()=>{const ti=document.getElementById('title-input');ti.addEventListener('keydown',e=>{if(e.key==='Enter')applyTitle();if(e.key==='Escape')closeTitleModal();});});
 
-// ─── Title ───
-function showTitleModal() {
-  document.getElementById('title-input').value = canvasTitle;
-  document.getElementById('title-overlay').classList.add('active');
-  setTimeout(() => document.getElementById('title-input').focus(), 100);
-}
-function closeTitleModal() { document.getElementById('title-overlay').classList.remove('active'); }
-function applyTitle() {
-  canvasTitle = document.getElementById('title-input').value.trim();
-  updateTitleBanner();
-  closeTitleModal();
-  autoSave();
-}
-function clearTitle() {
-  canvasTitle = '';
-  document.getElementById('title-input').value = '';
-  updateTitleBanner();
-  closeTitleModal();
-  autoSave();
-}
-function updateTitleBanner() {
-  const banner = document.getElementById('title-banner');
-  const display = document.getElementById('title-display');
-  if (canvasTitle) {
-    display.textContent = canvasTitle;
-    banner.classList.add('visible');
+// ─── Mode switching ───
+function switchMode(newMode) {
+  if (newMode === currentMode) return;
+  const oldCfg = MODE_CONFIG[currentMode], newCfg = MODE_CONFIG[newMode];
+  const old4 = oldCfg.tiers.length === 4, new4 = newCfg.tiers.length === 4;
+  let nd;
+
+  if (old4 && new4) {
+    nd = {}; newCfg.tiers.forEach(t => nd[t] = [...(tierData[t]||[])]);
+  } else if (old4 && !new4) {
+    // 4→7: Ultra→S, High→A, Mid→C, Low→F
+    nd = initEmpty(newMode);
+    nd.s=[...(tierData.ultra||[])]; nd.a=[...(tierData.high||[])];
+    nd.c=[...(tierData.mid||[])]; nd.f=[...(tierData.low||[])];
+  } else if (!old4 && new4) {
+    // 7→4: S→Ultra, A→High, B+C+D→Mid, E+F→Low
+    nd = initEmpty(newMode);
+    nd.ultra=[...(tierData.s||[])]; nd.high=[...(tierData.a||[])];
+    nd.mid=[...(tierData.b||[]),...(tierData.c||[]),...(tierData.d||[])];
+    nd.low=[...(tierData.e||[]),...(tierData.f||[])];
   } else {
-    banner.classList.remove('visible');
+    nd = {}; newCfg.tiers.forEach(t => nd[t] = [...(tierData[t]||[])]);
   }
+
+  tierData = nd; currentMode = newMode;
+  document.body.className = `mode-${newMode}`;
+  document.getElementById('mode-select').value = newMode;
+  buildTierRows(); renderAll(); autoSave();
 }
-// Enter key in title input
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('title-input').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') applyTitle();
-    if (e.key === 'Escape') closeTitleModal();
-  });
-});
+
+function buildTierRows() {
+  const c = document.getElementById('tier-container'), cfg = MODE_CONFIG[currentMode];
+  c.innerHTML = cfg.tiers.map(t => `
+    <div class="tier-row" data-tier="${t}">
+      <div class="tier-label" style="background:${cfg.colors[t]};color:${cfg.darkText[t]?'#111':'#fff'}">${cfg.labels[t]}</div>
+      <div class="tier-pedals" id="tier-${t}"><span class="empty-hint">Search &amp; add pedals →</span></div>
+    </div>`).join('');
+  if (!isTouchDevice) bindDesktopDropZones();
+}
 
 // ─── Init ───
 async function init() {
   try {
     const resp = await fetch(PEDALS_JSON_URL);
     allPedals = await resp.json();
-    allPedals.sort((a, b) => {
-      const ba = (a.Brand || '').localeCompare(b.Brand || '');
-      return ba !== 0 ? ba : (a.Name || '').localeCompare(b.Name || '');
-    });
-  } catch (e) {
-    console.error('Failed to load pedals.json:', e);
-    alert('Could not load pedal database. Check your connection.');
-  }
+    allPedals.sort((a,b) => { const ba=(a.Brand||'').localeCompare(b.Brand||''); return ba!==0?ba:(a.Name||'').localeCompare(b.Name||''); });
+  } catch(e) { console.error(e); alert('Could not load pedal database.'); }
 
-  const saved = localStorage.getItem('pedalTierList_v2');
+  const saved = localStorage.getItem('pranker_v1');
   if (saved) {
     try {
       const d = JSON.parse(saved);
+      if (d.mode && MODE_CONFIG[d.mode]) currentMode = d.mode;
       if (d.tiers) tierData = d.tiers;
       if (d.title) canvasTitle = d.title;
-      renderAll();
-      updateTitleBanner();
     } catch(e) {}
   }
+  MODE_CONFIG[currentMode].tiers.forEach(t => { if (!tierData[t]) tierData[t] = []; });
+
+  document.body.className = `mode-${currentMode}`;
+  document.getElementById('mode-select').value = currentMode;
+  buildTierRows(); renderAll(); updateTitleBanner();
 
   document.getElementById('loading').classList.add('hidden');
-  setTimeout(() => { const el = document.getElementById('loading'); if (el) el.remove(); }, 500);
-
-  setupSearch();
-  setupDesktopDragDrop();
-  setupTouchDragDrop();
+  setTimeout(()=>{const el=document.getElementById('loading');if(el)el.remove();},500);
+  setupSearch(); setupDesktopDragDrop(); setupTouchDragDrop();
 }
 
 // ─── Search ───
 function setupSearch() {
-  const input = document.getElementById('search-input');
-  const dropdown = document.getElementById('results-dropdown');
-
-  input.addEventListener('input', () => {
-    const q = input.value.trim().toLowerCase();
-    if (q.length < 2) { dropdown.style.display = 'none'; searchActiveIndex = -1; return; }
-    const matches = allPedals.filter(p => {
-      const hay = `${p.Brand} ${p.Name}`.toLowerCase();
-      return q.split(/\s+/).every(w => hay.includes(w));
-    }).slice(0, 30);
-    if (!matches.length) { dropdown.style.display = 'none'; searchActiveIndex = -1; return; }
-    dropdown.innerHTML = matches.map((p, i) => {
-      const gi = allPedals.indexOf(p);
-      return `<div class="result-item" data-index="${i}">
-        <img src="${IMAGE_BASE_URL}${p.Image}" loading="lazy" onerror="this.style.display='none'" />
-        <div class="pedal-info">
-          <div class="pedal-name">${escHtml(p.Name)}</div>
-          <div class="pedal-brand">${escHtml(p.Brand)}</div>
-        </div>
-        <div class="tier-buttons">
-          <button class="tier-btn" data-tier="ultra" onclick="event.stopPropagation();addPedal('ultra',${gi})">U</button>
-          <button class="tier-btn" data-tier="high"  onclick="event.stopPropagation();addPedal('high',${gi})">H</button>
-          <button class="tier-btn" data-tier="mid"   onclick="event.stopPropagation();addPedal('mid',${gi})">M</button>
-          <button class="tier-btn" data-tier="low"   onclick="event.stopPropagation();addPedal('low',${gi})">L</button>
-        </div>
-      </div>`;
+  const input=document.getElementById('search-input'), dropdown=document.getElementById('results-dropdown');
+  input.addEventListener('input',()=>{
+    const q=input.value.trim().toLowerCase();
+    if(q.length<2){dropdown.style.display='none';searchActiveIndex=-1;return;}
+    const cfg=MODE_CONFIG[currentMode];
+    const matches=allPedals.filter(p=>{const h=`${p.Brand} ${p.Name}`.toLowerCase();return q.split(/\s+/).every(w=>h.includes(w));}).slice(0,30);
+    if(!matches.length){dropdown.style.display='none';searchActiveIndex=-1;return;}
+    dropdown.innerHTML=matches.map((p,i)=>{
+      const gi=allPedals.indexOf(p);
+      const btns=cfg.tiers.map(t=>`<button class="tier-btn" style="background:${cfg.colors[t]};color:${cfg.darkText[t]?'#111':'#fff'}" onclick="event.stopPropagation();addPedal('${t}',${gi})">${cfg.btnLabels[t]}</button>`).join('');
+      return `<div class="result-item" data-index="${i}"><img src="${IMAGE_BASE_URL}${p.Image}" loading="lazy" onerror="this.style.display='none'"/><div class="pedal-info"><div class="pedal-name">${escHtml(p.Name)}</div><div class="pedal-brand">${escHtml(p.Brand)}</div></div><div class="tier-buttons">${btns}</div></div>`;
     }).join('');
-    dropdown.style.display = 'block';
-    searchActiveIndex = -1;
+    dropdown.style.display='block';searchActiveIndex=-1;
   });
-
-  input.addEventListener('keydown', (e) => {
-    const items = dropdown.querySelectorAll('.result-item');
-    if (!items.length || dropdown.style.display === 'none') return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); searchActiveIndex = Math.min(searchActiveIndex + 1, items.length - 1); updateActiveItem(items); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); searchActiveIndex = Math.max(searchActiveIndex - 1, 0); updateActiveItem(items); }
-    else if (e.key === 'Escape') { dropdown.style.display = 'none'; }
+  input.addEventListener('keydown',e=>{
+    const items=dropdown.querySelectorAll('.result-item');
+    if(!items.length||dropdown.style.display==='none')return;
+    if(e.key==='ArrowDown'){e.preventDefault();searchActiveIndex=Math.min(searchActiveIndex+1,items.length-1);updA(items);}
+    else if(e.key==='ArrowUp'){e.preventDefault();searchActiveIndex=Math.max(searchActiveIndex-1,0);updA(items);}
+    else if(e.key==='Escape')dropdown.style.display='none';
   });
-  document.addEventListener('pointerdown', (e) => {
-    if (!e.target.closest('#search-wrap')) dropdown.style.display = 'none';
-  });
+  document.addEventListener('pointerdown',e=>{if(!e.target.closest('#search-wrap'))dropdown.style.display='none';});
 }
-function updateActiveItem(items) {
-  items.forEach((el, i) => el.classList.toggle('active', i === searchActiveIndex));
-  if (items[searchActiveIndex]) items[searchActiveIndex].scrollIntoView({ block: 'nearest' });
-}
-
-function addPedal(tier, gi) {
-  const p = allPedals[gi];
-  if (!p) return;
-  tierData[tier].push({
-    id: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
-    brand: p.Brand, name: p.Name, image: p.Image,
-    width: p.Width, height: p.Height,
-  });
-  renderTier(tier); autoSave();
-}
-function removePedal(tier, id) {
-  tierData[tier] = tierData[tier].filter(p => p.id !== id);
-  renderTier(tier); autoSave();
-}
+function updA(items){items.forEach((el,i)=>el.classList.toggle('active',i===searchActiveIndex));if(items[searchActiveIndex])items[searchActiveIndex].scrollIntoView({block:'nearest'});}
+function addPedal(tier,gi){const p=allPedals[gi];if(!p)return;tierData[tier].push({id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,brand:p.Brand,name:p.Name,image:p.Image,width:p.Width,height:p.Height});renderTier(tier);autoSave();}
+function removePedal(tier,id){tierData[tier]=tierData[tier].filter(p=>p.id!==id);renderTier(tier);autoSave();}
 
 // ─── Rendering ───
-function renderAll() { ['ultra','high','mid','low'].forEach(renderTier); }
-function renderTier(tier) {
-  const c = document.getElementById(`tier-${tier}`);
-  const pedals = tierData[tier];
-  if (!pedals.length) { c.innerHTML = '<span class="empty-hint">Search &amp; add pedals →</span>'; return; }
-  c.innerHTML = pedals.map(p => {
-    const ar = (p.width && p.height) ? (p.width / p.height) : 0.75;
-    return `<div class="pedal-card" draggable="true" data-id="${p.id}" data-tier="${tier}" style="--pedal-ar:${ar.toFixed(3)}">
-      <img src="${IMAGE_BASE_URL}${p.image}" loading="lazy" alt="${escHtml(p.brand)} ${escHtml(p.name)}" onerror="this.parentElement.style.background='#333'" />
-      <button class="remove-btn" onclick="event.stopPropagation();removePedal('${tier}','${p.id}')">✕</button>
-      <div class="pedal-tooltip">${escHtml(p.brand)} ${escHtml(p.name)}</div>
-    </div>`;
-  }).join('');
+function renderAll(){MODE_CONFIG[currentMode].tiers.forEach(renderTier);}
+function renderTier(tier){
+  const c=document.getElementById(`tier-${tier}`);if(!c)return;
+  const pedals=tierData[tier]||[];
+  if(!pedals.length){c.innerHTML='<span class="empty-hint">Search &amp; add pedals →</span>';return;}
+  c.innerHTML=pedals.map(p=>{const ar=(p.width&&p.height)?(p.width/p.height):0.75;return `<div class="pedal-card" draggable="true" data-id="${p.id}" data-tier="${tier}" style="--pedal-ar:${ar.toFixed(3)}"><img src="${IMAGE_BASE_URL}${p.image}" loading="lazy" alt="${escHtml(p.brand)} ${escHtml(p.name)}" onerror="this.parentElement.style.background='#333'"/><button class="remove-btn" onclick="event.stopPropagation();removePedal('${tier}','${p.id}')">✕</button><div class="pedal-tooltip">${escHtml(p.brand)} ${escHtml(p.name)}</div></div>`;}).join('');
 }
 
-// ══════════════════════════════════
-//  DESKTOP DRAG & DROP
-// ══════════════════════════════════
-let draggedTier = null, draggedId = null, desktopPH = null;
-function setupDesktopDragDrop() {
-  if (isTouchDevice) return;
-  desktopPH = document.createElement('div'); desktopPH.className = 'drag-placeholder';
-  document.addEventListener('dragstart', (e) => {
-    const card = e.target.closest('.pedal-card'); if (!card) return;
-    draggedTier = card.dataset.tier; draggedId = card.dataset.id;
-    card.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', draggedId);
-  });
-  document.addEventListener('dragend', (e) => {
-    const card = e.target.closest('.pedal-card'); if (card) card.classList.remove('dragging');
-    rmDesktopPH(); document.querySelectorAll('.tier-row').forEach(r => r.classList.remove('drag-over'));
-    draggedTier = null; draggedId = null;
-  });
-  document.querySelectorAll('.tier-pedals').forEach(zone => {
-    zone.addEventListener('dragover', (e) => {
-      e.preventDefault(); e.dataTransfer.dropEffect = 'move';
-      zone.closest('.tier-row').classList.add('drag-over');
-      const af = getDragAfter(zone, e.clientX);
-      if (desktopPH.parentElement !== zone) rmDesktopPH();
-      if (af) zone.insertBefore(desktopPH, af); else zone.appendChild(desktopPH);
-    });
-    zone.addEventListener('dragleave', (e) => {
-      if (!zone.contains(e.relatedTarget)) {
-        zone.closest('.tier-row').classList.remove('drag-over');
-        if (desktopPH.parentElement === zone) rmDesktopPH();
-      }
-    });
-    zone.addEventListener('drop', (e) => {
-      e.preventDefault(); zone.closest('.tier-row').classList.remove('drag-over');
-      rmDesktopPH(); if (draggedId) finalizeDrop(zone, e.clientX, draggedTier, draggedId);
-    });
-  });
-}
-function rmDesktopPH() { if (desktopPH && desktopPH.parentElement) desktopPH.parentElement.removeChild(desktopPH); }
+// ═══ DESKTOP DND ═══
+let draggedTier=null,draggedId=null,desktopPH=null;
+function setupDesktopDragDrop(){if(isTouchDevice)return;desktopPH=document.createElement('div');desktopPH.className='drag-placeholder';document.addEventListener('dragstart',e=>{const card=e.target.closest('.pedal-card');if(!card)return;draggedTier=card.dataset.tier;draggedId=card.dataset.id;card.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',draggedId);});document.addEventListener('dragend',e=>{const card=e.target.closest('.pedal-card');if(card)card.classList.remove('dragging');rmDPH();document.querySelectorAll('.tier-row').forEach(r=>r.classList.remove('drag-over'));draggedTier=null;draggedId=null;});bindDesktopDropZones();}
+function bindDesktopDropZones(){if(isTouchDevice)return;document.querySelectorAll('.tier-pedals').forEach(zone=>{zone.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move';zone.closest('.tier-row').classList.add('drag-over');const af=getDragAfter(zone,e.clientX);if(desktopPH.parentElement!==zone)rmDPH();if(af)zone.insertBefore(desktopPH,af);else zone.appendChild(desktopPH);});zone.addEventListener('dragleave',e=>{if(!zone.contains(e.relatedTarget)){zone.closest('.tier-row').classList.remove('drag-over');if(desktopPH.parentElement===zone)rmDPH();}});zone.addEventListener('drop',e=>{e.preventDefault();zone.closest('.tier-row').classList.remove('drag-over');rmDPH();if(draggedId)finalizeDrop(zone,e.clientX,draggedTier,draggedId);});});}
+function rmDPH(){if(desktopPH&&desktopPH.parentElement)desktopPH.parentElement.removeChild(desktopPH);}
 
-// ══════════════════════════════════
-//  TOUCH DRAG & DROP
-// ══════════════════════════════════
-let touchDragState = null;
-function setupTouchDragDrop() {
-  if (!isTouchDevice) return;
-  const ghost = document.getElementById('touch-ghost');
-  let lpt = null, startTouch = null;
-
-  document.addEventListener('touchstart', (e) => {
-    const card = e.target.closest('.pedal-card');
-    if (!card || e.target.closest('.remove-btn')) { startTouch = null; return; }
-    const t = e.touches[0];
-    startTouch = { x: t.clientX, y: t.clientY, card, moved: false };
-    lpt = setTimeout(() => { if (startTouch && !startTouch.moved) beginTouchDrag(startTouch.card, t); }, 250);
-  }, { passive: true });
-
-  document.addEventListener('touchmove', (e) => {
-    const t = e.touches[0];
-    if (startTouch && !touchDragState) {
-      const dx = Math.abs(t.clientX - startTouch.x), dy = Math.abs(t.clientY - startTouch.y);
-      if (dx > 8 || dy > 8) { startTouch.moved = true; if (dx > 6) { clearTimeout(lpt); lpt = null; beginTouchDrag(startTouch.card, t); } }
-    }
-    if (!touchDragState) return;
-    e.preventDefault();
-    ghost.style.left = (t.clientX - touchDragState.ox) + 'px';
-    ghost.style.top  = (t.clientY - touchDragState.oy) + 'px';
-    document.querySelectorAll('.tier-row').forEach(r => r.classList.remove('drag-over'));
-    const oz = getTierZoneAt(t.clientX, t.clientY);
-    if (oz) {
-      oz.closest('.tier-row').classList.add('drag-over');
-      const ph = touchDragState.ph;
-      if (ph.parentElement !== oz) rmTouchPH();
-      const af = getDragAfter(oz, t.clientX);
-      if (af) oz.insertBefore(ph, af); else oz.appendChild(ph);
-    } else { rmTouchPH(); }
-  }, { passive: false });
-
-  document.addEventListener('touchend', (e) => {
-    clearTimeout(lpt); lpt = null; startTouch = null;
-    if (!touchDragState) return;
-    const t = e.changedTouches[0];
-    ghost.style.display = 'none';
-    document.querySelectorAll('.tier-row').forEach(r => r.classList.remove('drag-over'));
-    const oz = getTierZoneAt(t.clientX, t.clientY);
-    rmTouchPH();
-    if (oz && touchDragState.id) finalizeDrop(oz, t.clientX, touchDragState.st, touchDragState.id);
-    if (touchDragState.sc) touchDragState.sc.classList.remove('dragging');
-    touchDragState = null;
-  }, { passive: true });
-
-  document.addEventListener('touchcancel', () => {
-    clearTimeout(lpt); lpt = null; startTouch = null;
-    if (!touchDragState) return;
-    ghost.style.display = 'none';
-    document.querySelectorAll('.tier-row').forEach(r => r.classList.remove('drag-over'));
-    if (touchDragState.sc) touchDragState.sc.classList.remove('dragging');
-    rmTouchPH(); touchDragState = null;
-  }, { passive: true });
-
-  document.addEventListener('click', (e) => {
-    if (touchDragState) return;
-    const card = e.target.closest('.pedal-card');
-    document.querySelectorAll('.pedal-card.show-remove').forEach(c => { if (c !== card) c.classList.remove('show-remove'); });
-    if (card && !e.target.closest('.remove-btn')) card.classList.toggle('show-remove');
-  });
-}
-function beginTouchDrag(card, touch) {
-  if (touchDragState) return;
-  const ghost = document.getElementById('touch-ghost');
-  const rect = card.getBoundingClientRect();
-  card.classList.add('dragging'); card.classList.remove('show-remove');
-  const gw = Math.min(rect.width * 1.15, 90), sc = gw / rect.width, gh = rect.height * sc;
-  ghost.style.width = gw+'px'; ghost.style.height = gh+'px'; ghost.style.display = 'block';
-  const img = card.querySelector('img');
-  ghost.innerHTML = img ? `<img src="${img.src}">` : '';
-  ghost.style.left = (touch.clientX - gw/2)+'px'; ghost.style.top = (touch.clientY - gh/2)+'px';
-  const ph = document.createElement('div'); ph.className = 'drag-placeholder';
-  touchDragState = { sc: card, st: card.dataset.tier, id: card.dataset.id, ox: gw/2, oy: gh/2, ph };
-  if (navigator.vibrate) navigator.vibrate(25);
-}
-function getTierZoneAt(x, y) {
-  for (const row of document.querySelectorAll('.tier-row')) {
-    const r = row.getBoundingClientRect();
-    if (x >= r.left && x <= r.right && y >= r.top - 8 && y <= r.bottom + 8)
-      return row.querySelector('.tier-pedals');
-  }
-  return null;
-}
-function rmTouchPH() {
-  if (touchDragState && touchDragState.ph && touchDragState.ph.parentElement)
-    touchDragState.ph.parentElement.removeChild(touchDragState.ph);
-}
+// ═══ TOUCH DND ═══
+let touchDragState=null;
+function setupTouchDragDrop(){if(!isTouchDevice)return;const ghost=document.getElementById('touch-ghost');let lpt=null,st=null;
+document.addEventListener('touchstart',e=>{const card=e.target.closest('.pedal-card');if(!card||e.target.closest('.remove-btn')){st=null;return;}const t=e.touches[0];st={x:t.clientX,y:t.clientY,card,moved:false};lpt=setTimeout(()=>{if(st&&!st.moved)beginTD(st.card,t);},250);},{passive:true});
+document.addEventListener('touchmove',e=>{const t=e.touches[0];if(st&&!touchDragState){const dx=Math.abs(t.clientX-st.x),dy=Math.abs(t.clientY-st.y);if(dx>8||dy>8){st.moved=true;if(dx>6){clearTimeout(lpt);lpt=null;beginTD(st.card,t);}}}if(!touchDragState)return;e.preventDefault();ghost.style.left=(t.clientX-touchDragState.ox)+'px';ghost.style.top=(t.clientY-touchDragState.oy)+'px';document.querySelectorAll('.tier-row').forEach(r=>r.classList.remove('drag-over'));const oz=getTZAt(t.clientX,t.clientY);if(oz){oz.closest('.tier-row').classList.add('drag-over');const ph=touchDragState.ph;if(ph.parentElement!==oz)rmTPH();const af=getDragAfter(oz,t.clientX);if(af)oz.insertBefore(ph,af);else oz.appendChild(ph);}else rmTPH();},{passive:false});
+document.addEventListener('touchend',e=>{clearTimeout(lpt);lpt=null;st=null;if(!touchDragState)return;const t=e.changedTouches[0];ghost.style.display='none';document.querySelectorAll('.tier-row').forEach(r=>r.classList.remove('drag-over'));const oz=getTZAt(t.clientX,t.clientY);rmTPH();if(oz&&touchDragState.id)finalizeDrop(oz,t.clientX,touchDragState.srcT,touchDragState.id);if(touchDragState.sc)touchDragState.sc.classList.remove('dragging');touchDragState=null;},{passive:true});
+document.addEventListener('touchcancel',()=>{clearTimeout(lpt);lpt=null;st=null;if(!touchDragState)return;ghost.style.display='none';document.querySelectorAll('.tier-row').forEach(r=>r.classList.remove('drag-over'));if(touchDragState.sc)touchDragState.sc.classList.remove('dragging');rmTPH();touchDragState=null;},{passive:true});
+document.addEventListener('click',e=>{if(touchDragState)return;const card=e.target.closest('.pedal-card');document.querySelectorAll('.pedal-card.show-remove').forEach(c=>{if(c!==card)c.classList.remove('show-remove');});if(card&&!e.target.closest('.remove-btn'))card.classList.toggle('show-remove');});}
+function beginTD(card,touch){if(touchDragState)return;const ghost=document.getElementById('touch-ghost');const rect=card.getBoundingClientRect();card.classList.add('dragging');card.classList.remove('show-remove');const gw=Math.min(rect.width*1.15,90),sc=gw/rect.width,gh=rect.height*sc;ghost.style.width=gw+'px';ghost.style.height=gh+'px';ghost.style.display='block';const img=card.querySelector('img');ghost.innerHTML=img?`<img src="${img.src}">`:'';ghost.style.left=(touch.clientX-gw/2)+'px';ghost.style.top=(touch.clientY-gh/2)+'px';const ph=document.createElement('div');ph.className='drag-placeholder';touchDragState={sc:card,srcT:card.dataset.tier,id:card.dataset.id,ox:gw/2,oy:gh/2,ph};if(navigator.vibrate)navigator.vibrate(25);}
+function getTZAt(x,y){for(const row of document.querySelectorAll('.tier-row')){const r=row.getBoundingClientRect();if(x>=r.left&&x<=r.right&&y>=r.top-8&&y<=r.bottom+8)return row.querySelector('.tier-pedals');}return null;}
+function rmTPH(){if(touchDragState&&touchDragState.ph&&touchDragState.ph.parentElement)touchDragState.ph.parentElement.removeChild(touchDragState.ph);}
 
 // ─── Shared drop ───
-function finalizeDrop(zone, cx, srcTier, id) {
-  const tgtTier = zone.id.replace('tier-', '');
-  const idx = tierData[srcTier].findIndex(p => p.id === id);
-  if (idx === -1) return;
-  const [entry] = tierData[srcTier].splice(idx, 1);
-  const af = getDragAfter(zone, cx);
-  let ins;
-  if (af && af.dataset && af.dataset.id) {
-    ins = tierData[tgtTier].findIndex(p => p.id === af.dataset.id);
-    if (ins === -1) ins = tierData[tgtTier].length;
-  } else { ins = tierData[tgtTier].length; }
-  tierData[tgtTier].splice(ins, 0, entry);
-  renderTier(srcTier); if (srcTier !== tgtTier) renderTier(tgtTier);
-  autoSave();
-}
-function getDragAfter(container, x) {
-  let closest = null, co = Infinity;
-  for (const card of container.querySelectorAll('.pedal-card:not(.dragging)')) {
-    const b = card.getBoundingClientRect();
-    const off = x - (b.left + b.width / 2);
-    if (off < 0 && -off < co) { co = -off; closest = card; }
-  }
-  return closest;
-}
+function finalizeDrop(zone,cx,srcT,id){const tgtT=zone.id.replace('tier-','');const idx=tierData[srcT].findIndex(p=>p.id===id);if(idx===-1)return;const[entry]=tierData[srcT].splice(idx,1);const af=getDragAfter(zone,cx);let ins;if(af&&af.dataset&&af.dataset.id){ins=tierData[tgtT].findIndex(p=>p.id===af.dataset.id);if(ins===-1)ins=tierData[tgtT].length;}else ins=tierData[tgtT].length;tierData[tgtT].splice(ins,0,entry);renderTier(srcT);if(srcT!==tgtT)renderTier(tgtT);autoSave();}
+function getDragAfter(container,x){let closest=null,co=Infinity;for(const card of container.querySelectorAll('.pedal-card:not(.dragging)')){const b=card.getBoundingClientRect();const off=x-(b.left+b.width/2);if(off<0&&-off<co){co=-off;closest=card;}}return closest;}
 
 // ─── Save/Load ───
-function autoSave() {
-  localStorage.setItem('pedalTierList_v2', JSON.stringify({ tiers: tierData, title: canvasTitle }));
-}
-function saveTierList() {
-  const blob = new Blob([JSON.stringify({ tiers: tierData, title: canvasTitle }, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = getFilename('json');
-  a.click(); URL.revokeObjectURL(a.href);
-}
-function loadTierList() {
-  const input = document.createElement('input');
-  input.type = 'file'; input.accept = '.json';
-  input.onchange = async (e) => {
-    const file = e.target.files[0]; if (!file) return;
-    try {
-      const d = JSON.parse(await file.text());
-      // Support both old format (flat tiers) and new (with title)
-      if (d.tiers) { tierData = d.tiers; canvasTitle = d.title || ''; }
-      else if (d.ultra && d.high && d.mid && d.low) { tierData = d; canvasTitle = ''; }
-      else { alert('Invalid tier list file.'); return; }
-      renderAll(); updateTitleBanner(); autoSave();
-    } catch(e) { alert('Could not read file.'); }
-  };
-  input.click();
-}
-function clearAll() {
-  if (!confirm('Remove all pedals from all tiers?')) return;
-  tierData = { ultra: [], high: [], mid: [], low: [] };
-  renderAll(); autoSave();
-}
+function autoSave(){localStorage.setItem('pranker_v1',JSON.stringify({mode:currentMode,tiers:tierData,title:canvasTitle}));}
+function saveTierList(){const blob=new Blob([JSON.stringify({mode:currentMode,tiers:tierData,title:canvasTitle},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=getFilename('json');a.click();URL.revokeObjectURL(a.href);}
+function loadTierList(){const input=document.createElement('input');input.type='file';input.accept='.json';input.onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const d=JSON.parse(await file.text());if(d.mode&&d.tiers&&MODE_CONFIG[d.mode]){currentMode=d.mode;tierData=d.tiers;canvasTitle=d.title||'';}else if(d.tiers){tierData=d.tiers;canvasTitle=d.title||'';}else if(d.ultra||d.s){tierData=d;canvasTitle='';}else{alert('Invalid file.');return;}MODE_CONFIG[currentMode].tiers.forEach(t=>{if(!tierData[t])tierData[t]=[];});document.body.className=`mode-${currentMode}`;document.getElementById('mode-select').value=currentMode;buildTierRows();renderAll();updateTitleBanner();autoSave();}catch(e){alert('Could not read file.');}};input.click();}
+function clearAll(){if(!confirm('Remove all pedals from all tiers?'))return;tierData=initEmpty(currentMode);renderAll();autoSave();}
 
 // ─── Export ───
-async function exportImage() {
-  const overlay = document.getElementById('export-overlay');
-  const wrap = document.getElementById('export-canvas-wrap');
-  overlay.classList.add('active');
-  wrap.innerHTML = '<div style="padding:20px;color:#fff;font-size:12px;">Rendering…</div>';
-  await new Promise(r => setTimeout(r, 50));
-
-  const TH = 160, PAD = 24, PG = 16, PP = 16;
-  const TITLE_H = canvasTitle ? 52 : 0;
-  const tiers = ['ultra','high','mid','low'];
-  const colors = { ultra:'#ff2d55', high:'#5856d6', mid:'#34c759', low:'#007aff' };
-  const labels = { ultra:'ULTRA', high:'HIGH', mid:'MID', low:'LOW' };
-
-  // Measure label width dynamically so text always fits
-  const tmpC = document.createElement('canvas').getContext('2d');
-  tmpC.font = 'bold 26px "Press Start 2P", monospace';
-  let LW = 0;
-  for (const t of tiers) { LW = Math.max(LW, tmpC.measureText(labels[t]).width); }
-  LW = Math.ceil(LW) + 40; // add comfortable padding
-
-  // Compute width: ensure row bg always covers pedals
-  let maxPedalRowW = 0;
-  for (const t of tiers) {
-    let rw = 0;
-    for (const p of tierData[t]) {
-      const ar = (p.width && p.height) ? (p.width/p.height) : 0.75;
-      rw += (TH - PP*2) * ar + PG;
-    }
-    maxPedalRowW = Math.max(maxPedalRowW, rw);
-  }
-  const minContentW = LW + PP*2 + maxPedalRowW + PAD;
-  const cW = Math.max(700, minContentW + PAD*2);
-  const cH = TITLE_H + tiers.length * TH + (tiers.length + 1) * PAD;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = cW*2; canvas.height = cH*2;
-  canvas.style.width = cW+'px'; canvas.style.height = cH+'px';
-  const ctx = canvas.getContext('2d');
-  ctx.scale(2,2);
-
-  // Graph paper
-  ctx.fillStyle = '#e8f4f8'; ctx.fillRect(0,0,cW,cH);
-  ctx.strokeStyle = 'rgba(0,190,220,0.2)'; ctx.lineWidth = 0.5;
-  for (let x=0;x<cW;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cH);ctx.stroke();}
-  for (let y=0;y<cH;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cW,y);ctx.stroke();}
-  ctx.strokeStyle = 'rgba(0,190,220,0.4)'; ctx.lineWidth = 1;
-  for (let x=0;x<cW;x+=100){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cH);ctx.stroke();}
-  for (let y=0;y<cH;y+=100){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cW,y);ctx.stroke();}
-
-  // Title
-  if (canvasTitle) {
-    ctx.fillStyle = 'rgba(0,0,0,0.5)';
-    ctx.font = 'bold 22px "Press Start 2P", monospace';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(canvasTitle, cW/2, PAD + TITLE_H/2, cW - PAD*2);
-  }
-
-  // Preload images
-  const ic = {}; const lp = [];
-  for (const t of tiers) for (const p of tierData[t]) {
-    if (!ic[p.image]) {
-      const pr = new Promise(res => {
-        const img = new Image(); img.crossOrigin='anonymous';
-        img.onload = () => {ic[p.image]=img;res();}; img.onerror = () => {ic[p.image]=null;res();};
-        img.src = IMAGE_BASE_URL+p.image;
-      });
-      lp.push(pr); ic[p.image]='loading';
-    }
-  }
-  await Promise.all(lp);
-
-  // Draw tiers
-  for (let i=0;i<tiers.length;i++) {
-    const t = tiers[i];
-    const y = TITLE_H + PAD + i * (TH + PAD);
-    const rowW = cW - PAD*2;
-
-    // Row background — full width so pedals never extend past
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
-    ctx.beginPath(); ctx.roundRect(PAD, y, rowW, TH, 8); ctx.fill();
-
-    // Tier color label
-    ctx.fillStyle = colors[t];
-    ctx.beginPath(); ctx.roundRect(PAD, y, LW, TH, [8,0,0,8]); ctx.fill();
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 26px "Press Start 2P",monospace';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowBlur = 4;
-    ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 2;
-    ctx.fillText(labels[t], PAD + LW/2, y + TH/2);
-    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
-
-    // Pedals
-    let px = PAD + LW + PP;
-    const pH = TH - PP*2;
-    for (const p of tierData[t]) {
-      const ar = (p.width && p.height) ? (p.width/p.height) : 0.75;
-      const pW = pH * ar;
-      const img = ic[p.image];
-      if (img && img !== 'loading') ctx.drawImage(img, px, y+PP, pW, pH);
-      else { ctx.fillStyle='#444'; ctx.fillRect(px, y+PP, pW, pH); }
-      px += pW + PG;
-    }
-  }
-
-  // Watermark
-  ctx.fillStyle = 'rgba(0,0,0,0.18)';
-  ctx.font = '10px "Space Mono", monospace';
-  ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
-  ctx.fillText('Ivanizer by Pedalboardom • pedalplayground.com', cW - PAD, cH - 8);
-
-  wrap.innerHTML = ''; wrap.appendChild(canvas); window._exportCanvas = canvas;
+async function exportImage(){
+  const overlay=document.getElementById('export-overlay'),wrap=document.getElementById('export-canvas-wrap');
+  overlay.classList.add('active');wrap.innerHTML='<div style="padding:20px;color:#fff;font-size:12px;">Rendering…</div>';
+  await new Promise(r=>setTimeout(r,50));
+  const cfg=MODE_CONFIG[currentMode],tiers=cfg.tiers,n=tiers.length;
+  const TH=n<=4?160:100,PAD=n<=4?24:16,PG=n<=4?16:10,PP=n<=4?16:10;
+  const TITLE_H=canvasTitle?52:0;
+  const tmpC=document.createElement('canvas').getContext('2d');tmpC.font=cfg.labelFontExport;
+  let LW=0;for(const t of tiers)LW=Math.max(LW,tmpC.measureText(cfg.labels[t]).width);LW=Math.ceil(LW)+40;
+  let maxPW=0;for(const t of tiers){let rw=0;for(const p of(tierData[t]||[])){const ar=(p.width&&p.height)?(p.width/p.height):0.75;rw+=(TH-PP*2)*ar+PG;}maxPW=Math.max(maxPW,rw);}
+  const cW=Math.max(700,LW+PP*2+maxPW+PAD*3),cH=TITLE_H+n*TH+(n+1)*PAD;
+  const canvas=document.createElement('canvas');canvas.width=cW*2;canvas.height=cH*2;canvas.style.width=cW+'px';canvas.style.height=cH+'px';
+  const ctx=canvas.getContext('2d');ctx.scale(2,2);
+  ctx.fillStyle=cfg.bgExport;ctx.fillRect(0,0,cW,cH);
+  if(cfg.gridExport){ctx.strokeStyle='rgba(0,190,220,0.2)';ctx.lineWidth=0.5;for(let x=0;x<cW;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cH);ctx.stroke();}for(let y=0;y<cH;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cW,y);ctx.stroke();}ctx.strokeStyle='rgba(0,190,220,0.4)';ctx.lineWidth=1;for(let x=0;x<cW;x+=100){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cH);ctx.stroke();}for(let y=0;y<cH;y+=100){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cW,y);ctx.stroke();}}
+  if(canvasTitle){ctx.fillStyle=cfg.bgExport==='#1a1a2e'?'rgba(255,255,255,0.7)':'rgba(0,0,0,0.5)';ctx.font=cfg.titleFontExport;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(canvasTitle,cW/2,PAD+TITLE_H/2,cW-PAD*2);}
+  const ic={};const lp=[];for(const t of tiers)for(const p of(tierData[t]||[])){if(!ic[p.image]){const pr=new Promise(res=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{ic[p.image]=img;res();};img.onerror=()=>{ic[p.image]=null;res();};img.src=IMAGE_BASE_URL+p.image;});lp.push(pr);ic[p.image]='loading';}}await Promise.all(lp);
+  const isLight=cfg.bgExport!=='#1a1a2e';
+  for(let i=0;i<n;i++){const t=tiers[i],y=TITLE_H+PAD+i*(TH+PAD),rowW=cW-PAD*2;ctx.fillStyle=isLight?'rgba(255,255,255,0.35)':'rgba(255,255,255,0.06)';ctx.beginPath();ctx.roundRect(PAD,y,rowW,TH,8);ctx.fill();ctx.fillStyle=cfg.colors[t];ctx.beginPath();ctx.roundRect(PAD,y,LW,TH,[8,0,0,8]);ctx.fill();ctx.fillStyle=cfg.darkText[t]?'#111':'#fff';ctx.font=cfg.labelFontExport;ctx.textAlign='center';ctx.textBaseline='middle';if(!cfg.darkText[t]){ctx.shadowColor='rgba(0,0,0,0.3)';ctx.shadowBlur=3;ctx.shadowOffsetX=1;ctx.shadowOffsetY=1;}ctx.fillText(cfg.labels[t],PAD+LW/2,y+TH/2);ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;let px=PAD+LW+PP;const pH=TH-PP*2;for(const p of(tierData[t]||[])){const ar=(p.width&&p.height)?(p.width/p.height):0.75,pW=pH*ar;const img=ic[p.image];if(img&&img!=='loading')ctx.drawImage(img,px,y+PP,pW,pH);else{ctx.fillStyle='#444';ctx.fillRect(px,y+PP,pW,pH);}px+=pW+PG;}}
+  ctx.fillStyle=isLight?'rgba(0,0,0,0.18)':'rgba(255,255,255,0.15)';ctx.font='10px "DM Sans","Space Mono",monospace';ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText(cfg.watermark,cW-PAD,cH-8);
+  wrap.innerHTML='';wrap.appendChild(canvas);window._exportCanvas=canvas;
 }
-
-function downloadExport() {
-  if (!window._exportCanvas) return;
-  const a = document.createElement('a'); a.download = getFilename('png');
-  a.href = window._exportCanvas.toDataURL('image/png'); a.click();
-}
-function closeExport() {
-  document.getElementById('export-overlay').classList.remove('active');
-  window._exportCanvas = null;
-}
+function downloadExport(){if(!window._exportCanvas)return;const a=document.createElement('a');a.download=getFilename('png');a.href=window._exportCanvas.toDataURL('image/png');a.click();}
+function closeExport(){document.getElementById('export-overlay').classList.remove('active');window._exportCanvas=null;}
 
 // ─── Util ───
-function escHtml(s) { const d = document.createElement('div'); d.textContent = s||''; return d.innerHTML; }
-function getFilename(ext) {
-  if (canvasTitle) {
-    const slug = canvasTitle.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 60);
-    return slug + '.' + ext;
-  }
-  return 'ivanizer.' + ext;
-}
+function escHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function getFilename(ext){if(canvasTitle){const slug=canvasTitle.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,60);return slug+'.'+ext;}return 'pranker.'+ext;}
 
-// ─── Boot ───
 init();
 </script>
 </body>
